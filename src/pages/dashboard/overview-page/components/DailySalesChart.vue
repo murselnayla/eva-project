@@ -6,7 +6,8 @@ import { useAuthStore, useSalesAnalyticStore, useSalesSkuListStore } from '@/sto
 import type {
   DailySalesOverviewDay,
   DailySalesOverviewReqDto,
-  DailySalesSkuListReqDto
+  DailySalesSkuListReqDto,
+  SkuRefundRateReqDto
 } from '@/core/dtos'
 import { useToast } from 'vue-toastification'
 import DailySalesSkuTable from '@/pages/dashboard/overview-page/components/DailySalesSkuTable.vue'
@@ -43,8 +44,11 @@ const fetchDailySalesOverview = async (day: DailySalesOverviewDay) => {
 }
 
 const onChangeChartSelect = async (selectedPoints: any[]) => {
-  if (selectedPoints.length === 0) salesSkuListStore.resetState()
-
+  if (selectedPoints.length === 0) {
+    salesSkuListStore.resetState()
+    return
+  }
+  // isLoading.value = true
   const body: DailySalesSkuListReqDto = {
     marketplace: authStore.userInfo.user.store[0].marketplaceName,
     sellerId: authStore.userInfo.user.store[0].storeId,
@@ -57,6 +61,25 @@ const onChangeChartSelect = async (selectedPoints: any[]) => {
 
   try {
     await salesSkuListStore.fetchDailySalesSkuList(body)
+    await fetchSkuRefundRate()
+  } catch (err: any) {
+    toast.error(err.message)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+const fetchSkuRefundRate = async () => {
+  // isLoading.value = true
+  const body: SkuRefundRateReqDto = {
+    marketplace: authStore.userInfo.user.store[0].marketplaceName,
+    sellerId: authStore.userInfo.user.store[0].storeId,
+    requestedDay: selectedLastDay.value,
+    skuList: salesSkuListStore.getSkuList.map((item) => item.sku)
+  }
+
+  try {
+    await salesSkuListStore.fetchSkuRefundRate(body)
   } catch (err: any) {
     toast.error(err.message)
   } finally {
@@ -74,10 +97,7 @@ const chartOptions = computed(() => ({
     // }
   },
   title: {
-    text: `<div>
-<b>Daily Sales </b>
-</div>`,
-    useHTML: true,
+    text: 'Daily Sales',
     align: 'center'
   },
   xAxis: {

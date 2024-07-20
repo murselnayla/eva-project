@@ -2,20 +2,18 @@ import { defineStore } from 'pinia'
 import http from '@/core/http/http.service'
 import type {
   BaseResDtoWithAxios,
-  DailySalesOverviewItem,
-  DailySalesOverviewReqDto,
-  DailySalesOverviewResDto,
   DailySalesSkuListReqDto,
   DailySalesSkuListResDto,
-  SkuList
+  SkuList,
+  SkuRefundRateReqDto,
+  SkuRefundRateResDto
 } from '@/core/dtos'
-import { getDayNameByDate } from '@/core/utils'
-import { useSalesAnalyticStore } from '@/stores/use-sales-analytic'
 
 export const useSalesSkuListStore = defineStore('useSalesSkuList', {
   state: () => ({
     dailySalesSkuListData: {} as DailySalesSkuListResDto | {},
-    tableCurrency: '' as string
+    tableCurrency: '' as string,
+    skuRefundRate: [] as SkuRefundRateResDto[]
   }),
 
   getters: {
@@ -41,9 +39,23 @@ export const useSalesSkuListStore = defineStore('useSalesSkuList', {
       }
     },
 
+    async fetchSkuRefundRate(body: SkuRefundRateReqDto) {
+      try {
+        const { data }: BaseResDtoWithAxios<SkuRefundRateResDto[]> = await http.post(
+          'data/get-sku-refund-rate',
+          body
+        )
+        this.skuRefundRate = data.Data
+        return data
+      } catch (err: any) {
+        throw new Error(err.response.data.ApiStatusMessage)
+      }
+    },
+
     resetState() {
       this.dailySalesSkuListData = {}
       this.tableCurrency = ''
+      this.skuRefundRate = []
     }
   }
 })

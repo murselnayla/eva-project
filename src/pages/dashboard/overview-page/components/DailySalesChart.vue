@@ -10,17 +10,15 @@ import type {
   SkuRefundRateReqDto
 } from '@/core/dtos'
 import { useToast } from 'vue-toastification'
-import DailySalesSkuTable from '@/pages/dashboard/overview-page/components/DailySalesSkuTable.vue'
 
 const authStore = useAuthStore()
 const salesAnalyticStore = useSalesAnalyticStore()
 const salesSkuListStore = useSalesSkuListStore()
 const toast = useToast()
 const isLoading = ref(false)
-const selectedLastDay = ref<DailySalesOverviewDay>(7)
 
 onMounted(async () => {
-  await fetchDailySalesOverview(selectedLastDay.value)
+  await fetchDailySalesOverview(salesAnalyticStore.selectedLastDay)
 })
 
 const fetchDailySalesOverview = async (day: DailySalesOverviewDay) => {
@@ -28,8 +26,8 @@ const fetchDailySalesOverview = async (day: DailySalesOverviewDay) => {
 
   isLoading.value = true
   const body: DailySalesOverviewReqDto = {
-    marketplace: authStore.userInfo.user.store[0].marketplaceName,
-    sellerId: authStore.userInfo.user.store[0].storeId,
+    marketplace: authStore.getMarketplace,
+    sellerId: authStore.getSellerId,
     requestStatus: 0,
     day: day,
     excludeYoYData: true
@@ -50,8 +48,8 @@ const onChangeChartSelect = async (selectedPoints: any[]) => {
   }
   // isLoading.value = true
   const body: DailySalesSkuListReqDto = {
-    marketplace: authStore.userInfo.user.store[0].marketplaceName,
-    sellerId: authStore.userInfo.user.store[0].storeId,
+    marketplace: authStore.getMarketplace,
+    sellerId: authStore.getSellerId,
     salesDate: selectedPoints[0].salesDate,
     ...(selectedPoints.length === 2 && { salesDate2: selectedPoints[1].salesDate }),
     pageSize: 10,
@@ -72,9 +70,9 @@ const onChangeChartSelect = async (selectedPoints: any[]) => {
 const fetchSkuRefundRate = async () => {
   // isLoading.value = true
   const body: SkuRefundRateReqDto = {
-    marketplace: authStore.userInfo.user.store[0].marketplaceName,
-    sellerId: authStore.userInfo.user.store[0].storeId,
-    requestedDay: selectedLastDay.value,
+    marketplace: authStore.getMarketplace,
+    sellerId: authStore.getSellerId,
+    requestedDay: salesAnalyticStore.selectedLastDay,
     skuList: salesSkuListStore.getSkuList.map((item) => item.sku)
   }
 
@@ -90,11 +88,6 @@ const fetchSkuRefundRate = async () => {
 const chartOptions = computed(() => ({
   chart: {
     type: 'column'
-    // events: {
-    //   selection: function (event: any) {
-    //     console.log(event)
-    //   }
-    // }
   },
   title: {
     text: 'Daily Sales',
@@ -146,12 +139,6 @@ const chartOptions = computed(() => ({
             salesAnalyticStore.chartsSelectedPoints = chart.getSelectedPoints()
             onChangeChartSelect(salesAnalyticStore.chartsSelectedPoints)
           }
-          // select: (event) => {
-          //   console.log('SELECT')
-          // },
-          // unselect: (event) => {
-          //   console.log('UNSELECT')
-          // }
         }
       }
     },
@@ -195,11 +182,11 @@ const chartOptions = computed(() => ({
 <template>
   <div>
     <select
-      v-model="selectedLastDay"
-      @change="fetchDailySalesOverview(selectedLastDay)"
+      v-model="salesAnalyticStore.selectedLastDay"
+      @change="fetchDailySalesOverview(salesAnalyticStore.selectedLastDay)"
       class="block ml-auto text-sm bg-gray-200 rounded-lg p-2.5 mb-3"
     >
-      <template v-for="(day, index) in [7, 14, 30]" :key="index">
+      <template v-for="(day, index) in [7, 14, 30, 60]" :key="index">
         <option :value="day">Last {{ day }} Days</option>
       </template>
     </select>

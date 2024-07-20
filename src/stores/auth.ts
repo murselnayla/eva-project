@@ -16,7 +16,10 @@ export const useAuthStore = defineStore('auth', {
   state: () => ({
     userInfo: {} as UserInfoResDto
   }),
-  getters: {},
+  getters: {
+    getMarketplace: (state) => state.userInfo.user?.store[0]?.marketplaceName,
+    getSellerId: (state) => state.userInfo.user?.store[0]?.storeId
+  },
   actions: {
     async login(body: LoginReqDto) {
       try {
@@ -30,10 +33,7 @@ export const useAuthStore = defineStore('auth', {
 
     async checkUserInfo(body: UserInfoReqDto) {
       try {
-        const { data }: BaseResDtoWithAxios<UserInfoResDto> = await http.post(
-          'user/user-information',
-          body
-        )
+        const { data }: BaseResDtoWithAxios<UserInfoResDto> = await http.post('user/user-information', body)
         StorageService.setJSON(StorageKey.USER, data.Data)
         this.userInfo = data.Data
         return data

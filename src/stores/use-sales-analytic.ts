@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import http from '@/core/http/http.service'
 import type {
   BaseResDtoWithAxios,
+  DailySalesOverviewDay,
   DailySalesOverviewItem,
   DailySalesOverviewReqDto,
   DailySalesOverviewResDto
@@ -17,7 +18,8 @@ export const useSalesAnalyticStore = defineStore('useSalesAnalytic', {
     chartFbmAmountSeries: [] as any[],
     chartCategoryDates: [] as any[],
     chartSeriesData: [] as any[],
-    chartsSelectedPoints: [] as any[]
+    chartsSelectedPoints: [] as any[],
+    selectedLastDay: 7 as DailySalesOverviewDay
   }),
 
   getters: {

@@ -14,6 +14,9 @@ export namespace StorageService {
   export function set(key: StorageKey, value: string): void {
     localStorage.setItem(key, value)
   }
+  export function setJSON(key: StorageKey, value: any): void {
+    localStorage.setItem(key, JSON.stringify(value))
+  }
 
   export function remove(key: StorageKey): void {
     localStorage.removeItem(key)

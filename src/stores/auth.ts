@@ -10,6 +10,8 @@ import type {
 } from '@/core/dtos'
 import { StorageService } from '@/core/services/storage'
 import type { AxiosResponse } from 'axios'
+import { StorageKey } from '@/core/enums'
+
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     userInfo: {} as UserInfoResDto
@@ -32,6 +34,7 @@ export const useAuthStore = defineStore('auth', {
           'user/user-information',
           body
         )
+        StorageService.setJSON(StorageKey.USER, data.Data)
         this.userInfo = data.Data
         return data
       } catch (err: any) {

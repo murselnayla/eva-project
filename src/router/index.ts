@@ -30,7 +30,7 @@ const router = createRouter({
         {
           path: '/overview',
           name: 'overview',
-          component: () => import('@/pages/dashboard/OverviewPage.vue'),
+          component: () => import('@/pages/dashboard/overview-page/OverviewPage.vue'),
           beforeEnter: [authGuard]
         }
       ]

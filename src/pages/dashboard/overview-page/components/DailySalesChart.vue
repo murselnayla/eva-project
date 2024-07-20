@@ -23,6 +23,8 @@ onMounted(async () => {
 })
 
 const fetchDailySalesOverview = async (day: DailySalesOverviewDay) => {
+  salesSkuListStore.resetState()
+
   isLoading.value = true
   const body: DailySalesOverviewReqDto = {
     marketplace: authStore.userInfo.user.store[0].marketplaceName,
@@ -41,7 +43,8 @@ const fetchDailySalesOverview = async (day: DailySalesOverviewDay) => {
 }
 
 const onChangeChartSelect = async (selectedPoints: any[]) => {
-  if (selectedPoints.length === 0) salesSkuListStore.dailySalesSkuListData = {}
+  if (selectedPoints.length === 0) salesSkuListStore.resetState()
+
   const body: DailySalesSkuListReqDto = {
     marketplace: authStore.userInfo.user.store[0].marketplaceName,
     sellerId: authStore.userInfo.user.store[0].storeId,
@@ -121,7 +124,7 @@ const chartOptions = computed(() => ({
             }
 
             salesAnalyticStore.chartsSelectedPoints = chart.getSelectedPoints()
-            onChangeChartSelect(chart.getSelectedPoints())
+            onChangeChartSelect(salesAnalyticStore.chartsSelectedPoints)
           }
           // select: (event) => {
           //   console.log('SELECT')

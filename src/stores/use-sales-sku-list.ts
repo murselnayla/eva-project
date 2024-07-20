@@ -10,6 +10,7 @@ import type {
   SkuList
 } from '@/core/dtos'
 import { getDayNameByDate } from '@/core/utils'
+import { useSalesAnalyticStore } from '@/stores/use-sales-analytic'
 
 export const useSalesSkuListStore = defineStore('useSalesSkuList', {
   state: () => ({
@@ -38,6 +39,11 @@ export const useSalesSkuListStore = defineStore('useSalesSkuList', {
       } catch (err: any) {
         throw new Error(err.response.data.ApiStatusMessage)
       }
+    },
+
+    resetState() {
+      this.dailySalesSkuListData = {}
+      this.tableCurrency = ''
     }
   }
 })

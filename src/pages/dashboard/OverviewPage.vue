@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <RouterView />
+  <div>Overview</div>
 </template>
 
 <style scoped></style>

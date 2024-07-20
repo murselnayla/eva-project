@@ -3,22 +3,20 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, reactive } from 'vue'
 import { useAuthStore, useSalesAnalyticStore, useSalesSkuListStore } from '@/stores'
-import axios from 'axios'
 import type {
   DailySalesOverviewDay,
   DailySalesOverviewReqDto,
   DailySalesSkuListReqDto
 } from '@/core/dtos'
 import { useToast } from 'vue-toastification'
+import DailySalesSkuTable from '@/pages/dashboard/overview-page/components/DailySalesSkuTable.vue'
 
 const authStore = useAuthStore()
 const salesAnalyticStore = useSalesAnalyticStore()
-const salesSkuList = useSalesSkuListStore()
+const salesSkuListStore = useSalesSkuListStore()
 const toast = useToast()
 const isLoading = ref(false)
 const selectedLastDay = ref<DailySalesOverviewDay>(7)
-const selectedChartPoints = ref<any[]>([])
-const skuList = ref()
 
 onMounted(async () => {
   await fetchDailySalesOverview(selectedLastDay.value)
@@ -43,10 +41,11 @@ const fetchDailySalesOverview = async (day: DailySalesOverviewDay) => {
 }
 
 const onChangeChartSelect = async (selectedPoints: any[]) => {
+  if (selectedPoints.length === 0) salesSkuListStore.dailySalesSkuListData = {}
   const body: DailySalesSkuListReqDto = {
     marketplace: authStore.userInfo.user.store[0].marketplaceName,
     sellerId: authStore.userInfo.user.store[0].storeId,
-    salesDate: selectedPoints[0].salesData,
+    salesDate: selectedPoints[0].salesDate,
     ...(selectedPoints.length === 2 && { salesDate2: selectedPoints[1].salesDate }),
     pageSize: 10,
     pageNumber: 1,
@@ -54,7 +53,7 @@ const onChangeChartSelect = async (selectedPoints: any[]) => {
   }
 
   try {
-    await salesSkuList.fetchDailySalesSkuList(body)
+    await salesSkuListStore.fetchDailySalesSkuList(body)
   } catch (err: any) {
     toast.error(err.message)
   } finally {
@@ -72,7 +71,10 @@ const chartOptions = computed(() => ({
     // }
   },
   title: {
-    text: 'Daily Sales',
+    text: `<div>
+<b>Daily Sales </b>
+</div>`,
+    useHTML: true,
     align: 'center'
   },
   xAxis: {
@@ -118,7 +120,7 @@ const chartOptions = computed(() => ({
               selectedPoints[0].select(false, true)
             }
 
-            selectedChartPoints.value = chart.getSelectedPoints()
+            salesAnalyticStore.chartsSelectedPoints = chart.getSelectedPoints()
             onChangeChartSelect(chart.getSelectedPoints())
           }
           // select: (event) => {
@@ -146,21 +148,21 @@ const chartOptions = computed(() => ({
       name: 'Profit',
       data: salesAnalyticStore.chartProfitSeries.map((value, index) => ({
         y: value,
-        salesData: salesAnalyticStore.chartCategoryDates[index]
+        salesDate: salesAnalyticStore.chartCategoryDates[index]
       }))
     },
     {
       name: 'FBA Sales',
       data: salesAnalyticStore.chartFbmAmountSeries.map((value, index) => ({
         y: value,
-        salesData: salesAnalyticStore.chartCategoryDates[index]
+        salesDate: salesAnalyticStore.chartCategoryDates[index]
       }))
     },
     {
       name: 'FBM Sales',
       data: salesAnalyticStore.chartFbaAmountSeries.map((value, index) => ({
         y: value,
-        salesData: salesAnalyticStore.chartCategoryDates[index]
+        salesDate: salesAnalyticStore.chartCategoryDates[index]
       }))
     }
   ]
@@ -178,6 +180,7 @@ const chartOptions = computed(() => ({
         <option :value="day">Last {{ day }} Days</option>
       </template>
     </select>
+
     <template v-if="!isLoading">
       <highcharts :options="chartOptions" style="width: 100%" />
     </template>

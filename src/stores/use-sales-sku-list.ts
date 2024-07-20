@@ -6,17 +6,22 @@ import type {
   DailySalesOverviewReqDto,
   DailySalesOverviewResDto,
   DailySalesSkuListReqDto,
-  DailySalesSkuListResDto
+  DailySalesSkuListResDto,
+  SkuList
 } from '@/core/dtos'
-import { getChartDateFormat } from '@/core/utils'
+import { getDayNameByDate } from '@/core/utils'
 
 export const useSalesSkuListStore = defineStore('useSalesSkuList', {
   state: () => ({
-    dailySalesSkuListData: {} as DailySalesSkuListResDto,
+    dailySalesSkuListData: {} as DailySalesSkuListResDto | {},
     tableCurrency: '' as string
   }),
 
-  getters: {},
+  getters: {
+    getSkuList: (state: any): SkuList[] => {
+      return state.dailySalesSkuListData?.item?.skuList || []
+    }
+  },
 
   actions: {
     async fetchDailySalesSkuList(body: DailySalesSkuListReqDto) {

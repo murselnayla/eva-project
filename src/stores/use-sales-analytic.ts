@@ -7,7 +7,7 @@ import type {
   DailySalesOverviewReqDto,
   DailySalesOverviewResDto
 } from '@/core/dtos'
-import { getDayNameByDate } from '@/core/utils'
+import { convertBaseDateFormat, getDayNameByDate } from '@/core/utils'
 
 export const useSalesAnalyticStore = defineStore('useSalesAnalytic', {
   state: () => ({
@@ -31,7 +31,7 @@ export const useSalesAnalyticStore = defineStore('useSalesAnalytic', {
       },
 
     getChartCategories: (state: any): any[] => {
-      return state.chartCategoryDates.map((item: any) => `${getDayNameByDate(item)}, ${item}`)
+      return state.chartCategoryDates.map((item: any) => `${getDayNameByDate(item)}, ${convertBaseDateFormat(item)}`)
     }
   },
 

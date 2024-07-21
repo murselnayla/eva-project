@@ -1,7 +1,12 @@
-import { ref, computed, type ComputedRef } from 'vue'
+import { computed, type ComputedRef } from 'vue'
 import { useAuthStore, usePageLoadingStore, useSalesAnalyticStore, useSalesSkuListStore } from '@/stores'
 import type { DailySalesSkuListReqDto, SkuList, SkuRefundRateReqDto } from '@/core/dtos'
 import { useToast } from 'vue-toastification'
+
+// Pagination Config
+export const PAGE_SIZE = 30
+const ITEMS_PER_PAGE = 10
+const PAGES_COUNT = PAGE_SIZE / ITEMS_PER_PAGE
 
 export function useSkuTable() {
   const pageLoadingStore = usePageLoadingStore()
@@ -16,13 +21,13 @@ export function useSkuTable() {
   const pageRequestNumber = computed(() => salesSkuListStore.pagination.pageRequestNumber)
 
   const currentPageItems = computed(() => {
-    const start = ((salesSkuListStore.pagination.pageNumber - 1) % 3) * 10
-    const end = start + 10
+    const start = ((salesSkuListStore.pagination.pageNumber - 1) % PAGES_COUNT) * ITEMS_PER_PAGE
+    const end = start + ITEMS_PER_PAGE
     return skuList.value.slice(start, end)
   })
 
   const totalPages = computed(() => {
-    const baseTotal = Math.ceil(skuList.value.length / 10) * pageRequestNumber.value
+    const baseTotal = Math.ceil(skuList.value.length / ITEMS_PER_PAGE) * pageRequestNumber.value
     return baseTotal + (hasMorePages.value ? 1 : 0)
   })
 
@@ -39,7 +44,7 @@ export function useSkuTable() {
   const tableCurrency = computed(() => salesSkuListStore.tableCurrency)
 
   const setPage = async (newPageNumber: number) => {
-    const newPageRequestNumber = Math.ceil(newPageNumber / 3)
+    const newPageRequestNumber = Math.ceil(newPageNumber / PAGES_COUNT)
     if (pageRequestNumber.value !== newPageRequestNumber) {
       salesSkuListStore.pagination.pageRequestNumber = newPageRequestNumber
       await fetchSalesSkuList()

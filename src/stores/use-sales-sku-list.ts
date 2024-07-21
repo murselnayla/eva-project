@@ -7,8 +7,8 @@ import type {
   SkuRefundRateReqDto,
   SkuRefundRateResDto
 } from '@/core/dtos'
+import { PAGE_SIZE } from '@/composables'
 
-const PAGE_SIZE = 30
 export const useSalesSkuListStore = defineStore('useSalesSkuList', {
   state: () => ({
     dailySalesSkuListData: {} as DailySalesSkuListResDto | any,

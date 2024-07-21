@@ -7,6 +7,7 @@ import type {
   DailySalesOverviewReqDto,
   DailySalesOverviewResDto
 } from '@/core/dtos'
+import type { IChartSelectedPoint } from '@/core/interfaces'
 import { convertBaseDateFormat, getDayNameByDate } from '@/core/utils'
 
 export const useSalesAnalyticStore = defineStore('useSalesAnalytic', {
@@ -18,8 +19,9 @@ export const useSalesAnalyticStore = defineStore('useSalesAnalytic', {
     chartFbmAmountSeries: [] as any[],
     chartCategoryDates: [] as any[],
     chartSeriesData: [] as any[],
-    chartsSelectedPoints: [] as any[],
-    selectedLastDay: 14 as DailySalesOverviewDay
+    chartsSelectedPoints: [] as IChartSelectedPoint[],
+    selectedLastDay: 14 as DailySalesOverviewDay,
+    selectedDateColors: ['#28ab2c', '#449a9a'] as string[]
   }),
 
   getters: {
@@ -32,7 +34,13 @@ export const useSalesAnalyticStore = defineStore('useSalesAnalytic', {
 
     getChartCategories: (state: any): any[] => {
       return state.chartCategoryDates.map((item: any) => `${getDayNameByDate(item)}, ${convertBaseDateFormat(item)}`)
-    }
+    },
+
+    getSelectedDateColorByIndex:
+      (state: any) =>
+      (index: number): string => {
+        return state.selectedDateColors[index]
+      }
   },
 
   actions: {

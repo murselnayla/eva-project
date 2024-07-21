@@ -95,6 +95,7 @@ export function useSkuTable() {
     currentPageItems,
     tableCurrency,
     selectedLastDay: salesAnalyticStore.selectedLastDay,
+    selectedDateColor: salesAnalyticStore.getSelectedDateColorByIndex,
     totalPages,
     disabledPrevBtn,
     disabledNextBtn,

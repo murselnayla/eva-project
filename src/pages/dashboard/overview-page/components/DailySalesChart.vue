@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useAuthStore, usePageLoadingStore, useSalesAnalyticStore, useSalesSkuListStore } from '@/stores'
 import type { DailySalesOverviewDay, DailySalesOverviewReqDto } from '@/core/dtos'
 import { useToast } from 'vue-toastification'
@@ -45,10 +45,45 @@ const onChangeChartSelect = async (selectedPoints: any[]) => {
   await skuPagination.fetchSalesSkuList()
 }
 
+const toggleChartPoint = (index: number, salesDate: string) => {
+  const pointIndex = salesAnalyticStore.chartsSelectedPoints.findIndex((point) => point.salesDate === salesDate)
+
+  if (pointIndex !== -1) {
+    salesAnalyticStore.chartsSelectedPoints.splice(pointIndex, 1)
+  } else {
+    if (salesAnalyticStore.chartsSelectedPoints.length >= 2) {
+      salesAnalyticStore.chartsSelectedPoints.shift()
+    }
+    salesAnalyticStore.chartsSelectedPoints.push({ salesDate, index })
+  }
+
+  onChangeChartSelect(salesAnalyticStore.chartsSelectedPoints)
+}
+
+const drawPlotBand = (xAxis: any) => {
+  xAxis.removePlotBand('selected')
+  salesAnalyticStore.chartsSelectedPoints.forEach((point: any, index: number) => {
+    xAxis.addPlotBand({
+      from: point.index - 0.5,
+      to: point.index + 0.5,
+      color: `${salesAnalyticStore.getSelectedDateColorByIndex(index)}53`,
+      id: 'selected'
+    })
+  })
+}
+
 const chartOptions = computed(() => ({
   chart: {
     type: 'column',
-    backgroundColor: null
+    backgroundColor: 'transparent',
+    events: {
+      click: function (e: any) {
+        const index = Math.floor(this.xAxis[0].toValue(e.x, true)) - 1
+        const selectedSalesDate = this.series[0].data[index].options.salesDate
+        toggleChartPoint(index, selectedSalesDate)
+        drawPlotBand(this.xAxis[0])
+      }
+    }
   },
   credits: { enabled: false },
   title: { text: null },
@@ -61,6 +96,7 @@ const chartOptions = computed(() => ({
   },
   yAxis: {
     allowDecimals: true,
+    gridLineDashStyle: 'Dash',
     min: 0,
     title: {
       text: `Amount (${salesAnalyticStore.chartCurrency})`
@@ -75,27 +111,19 @@ const chartOptions = computed(() => ({
   plotOptions: {
     column: {
       stacking: 'normal',
-      states: {
-        select: {
-          color: 'red'
-        }
-      },
-      slicedOffset: 0,
+      maxPointWidth: 70,
+      borderWidth: 0,
       point: {
         events: {
-          click: function (event: any) {
-            const chart = this.series.chart
-            this.selectedTime = Date.now()
-            event.point.select(null, true)
-
-            const selectedPoints = chart.getSelectedPoints()
-            if (selectedPoints.length > 2) {
-              selectedPoints.sort((a: any, b: any) => a.selectedTime - b.selectedTime)
-              selectedPoints[0].select(false, true)
-            }
-
-            salesAnalyticStore.chartsSelectedPoints = chart.getSelectedPoints()
-            onChangeChartSelect(salesAnalyticStore.chartsSelectedPoints)
+          click: function (e: any) {
+            toggleChartPoint(e.point.index, e.point.salesDate)
+            drawPlotBand(this.series.chart.xAxis[0])
+          },
+          mouseOver: function () {
+            this.series.chart.container.style.cursor = 'pointer'
+          },
+          mouseOut: function () {
+            this.series.chart.container.style.cursor = 'default'
           }
         }
       }

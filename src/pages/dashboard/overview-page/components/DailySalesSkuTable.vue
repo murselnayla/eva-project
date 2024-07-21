@@ -7,7 +7,7 @@ import DailySalesSkuTablePagination from '@/pages/dashboard/overview-page/compon
 
 const salesSkuListStore = useSalesSkuListStore()
 const getDailySalesItem = computed(() => salesSkuListStore.dailySalesSkuListData?.item)
-const { currentPageItems, tableCurrency, selectedLastDay } = useSkuTable()
+const { currentPageItems, tableCurrency, selectedLastDay, selectedDateColor } = useSkuTable()
 </script>
 
 <template>
@@ -41,11 +41,11 @@ const { currentPageItems, tableCurrency, selectedLastDay } = useSkuTable()
             <tr class="odd:bg-gray-100 even:bg-white">
               <td>{{ skuItem.sku }}</td>
               <td>{{ skuItem.productName }}</td>
-              <td v-if="getDailySalesItem?.selectedDate2" class="text-right">
+              <td v-if="getDailySalesItem?.selectedDate2" class="text-right" :style="{ color: selectedDateColor(1) }">
                 {{ tableCurrency }}{{ skuItem.amount2 }} / {{ skuItem.qty2 }}<br />
                 {{ tableCurrency }}{{ (skuItem.amount2 / skuItem.qty2).toFixed(2) }}<br />
               </td>
-              <td class="text-right">
+              <td class="text-right" :style="{ color: selectedDateColor(0) }">
                 {{ tableCurrency }}{{ skuItem.amount }} / {{ skuItem.qty }}<br />
                 {{ tableCurrency }}{{ (skuItem.amount / skuItem.qty).toFixed(2) }}<br />
               </td>

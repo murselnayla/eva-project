@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useAuthStore, useSalesAnalyticStore, useSalesSkuListStore } from '@/stores'
+import { useAuthStore, usePageLoadingStore, useSalesAnalyticStore, useSalesSkuListStore } from '@/stores'
 import type { DailySalesOverviewDay, DailySalesOverviewReqDto } from '@/core/dtos'
 import { useToast } from 'vue-toastification'
 import { useSkuTable } from '@/composables'
 
+const pageLoadingStore = usePageLoadingStore()
 const authStore = useAuthStore()
 const salesAnalyticStore = useSalesAnalyticStore()
 const salesSkuListStore = useSalesSkuListStore()
 const skuPagination = useSkuTable()
 const toast = useToast()
-const isLoading = ref(false)
 
 onMounted(async () => {
   await fetchDailySalesOverview(salesAnalyticStore.selectedLastDay)
@@ -19,7 +19,7 @@ onMounted(async () => {
 const fetchDailySalesOverview = async (day: DailySalesOverviewDay) => {
   salesSkuListStore.resetState()
 
-  isLoading.value = true
+  pageLoadingStore.showLoading()
   const body: DailySalesOverviewReqDto = {
     marketplace: authStore.getMarketplace,
     sellerId: authStore.getSellerId,
@@ -32,7 +32,7 @@ const fetchDailySalesOverview = async (day: DailySalesOverviewDay) => {
   } catch (err: any) {
     toast.error(err.message)
   } finally {
-    isLoading.value = false
+    pageLoadingStore.hideLoading()
   }
 }
 
@@ -150,7 +150,7 @@ const chartOptions = computed(() => ({
       </template>
     </select>
 
-    <template v-if="!isLoading">
+    <template v-if="salesAnalyticStore.dailySalesOverviewData">
       <highcharts :options="chartOptions" style="width: 100%" />
     </template>
   </div>

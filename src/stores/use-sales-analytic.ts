@@ -19,7 +19,7 @@ export const useSalesAnalyticStore = defineStore('useSalesAnalytic', {
     chartCategoryDates: [] as any[],
     chartSeriesData: [] as any[],
     chartsSelectedPoints: [] as any[],
-    selectedLastDay: 7 as DailySalesOverviewDay
+    selectedLastDay: 14 as DailySalesOverviewDay
   }),
 
   getters: {

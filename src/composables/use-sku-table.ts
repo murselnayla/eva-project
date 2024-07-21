@@ -1,14 +1,14 @@
 import { ref, computed, type ComputedRef } from 'vue'
-import { useAuthStore, useSalesAnalyticStore, useSalesSkuListStore } from '@/stores'
+import { useAuthStore, usePageLoadingStore, useSalesAnalyticStore, useSalesSkuListStore } from '@/stores'
 import type { DailySalesSkuListReqDto, SkuList, SkuRefundRateReqDto } from '@/core/dtos'
 import { useToast } from 'vue-toastification'
 
 export function useSkuTable() {
+  const pageLoadingStore = usePageLoadingStore()
   const authStore = useAuthStore()
   const salesAnalyticStore = useSalesAnalyticStore()
   const salesSkuListStore = useSalesSkuListStore()
   const toast = useToast()
-  const isLoading = ref(false)
 
   const skuList: ComputedRef<SkuList[]> = computed(() => salesSkuListStore.dailySalesSkuListData?.item?.skuList)
   const pageSize = computed(() => salesSkuListStore.pagination.pageSize)
@@ -48,7 +48,7 @@ export function useSkuTable() {
   }
 
   const fetchSalesSkuList = async (pageNum: number = pageRequestNumber.value) => {
-    isLoading.value = true
+    pageLoadingStore.showLoading()
     const { chartsSelectedPoints } = salesAnalyticStore
     const body: DailySalesSkuListReqDto = {
       marketplace: authStore.getMarketplace,
@@ -66,7 +66,7 @@ export function useSkuTable() {
     } catch (err: any) {
       toast.error(err.message)
     } finally {
-      isLoading.value = false
+      pageLoadingStore.hideLoading()
     }
   }
 
@@ -86,7 +86,6 @@ export function useSkuTable() {
   }
 
   return {
-    isLoading,
     pageNumber,
     currentPageItems,
     tableCurrency,

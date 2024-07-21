@@ -49,6 +49,9 @@ const chartOptions = computed(() => ({
   chart: {
     type: 'column'
   },
+  credits: {
+    enabled: false
+  },
   title: {
     text: 'Daily Sales',
     align: 'center'

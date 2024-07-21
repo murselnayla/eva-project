@@ -42,14 +42,14 @@ const { currentPageItems, tableCurrency, selectedLastDay } = useSkuTable()
               <td>{{ skuItem.sku }}</td>
               <td>{{ skuItem.productName }}</td>
               <td v-if="getDailySalesItem?.selectedDate2" class="text-right">
-                {{ tableCurrency }} {{ skuItem.amount2 }} / {{ skuItem.qty2 }}<br />
-                {{ tableCurrency }} {{ (skuItem.amount2 / skuItem.qty2).toFixed(2) }}<br />
+                {{ tableCurrency }}{{ skuItem.amount2 }} / {{ skuItem.qty2 }}<br />
+                {{ tableCurrency }}{{ (skuItem.amount2 / skuItem.qty2).toFixed(2) }}<br />
               </td>
               <td class="text-right">
-                {{ tableCurrency }} {{ skuItem.amount }} / {{ skuItem.qty }}<br />
-                {{ tableCurrency }} {{ (skuItem.amount / skuItem.qty).toFixed(2) }}<br />
+                {{ tableCurrency }}{{ skuItem.amount }} / {{ skuItem.qty }}<br />
+                {{ tableCurrency }}{{ (skuItem.amount / skuItem.qty).toFixed(2) }}<br />
               </td>
-              <td class="text-right">{{ salesSkuListStore.skuRefundRate?.[index]?.refundRate }} %</td>
+              <td class="text-right">{{ salesSkuListStore.skuRefundRate?.[index]?.refundRate }}%</td>
             </tr>
           </template>
         </tbody>

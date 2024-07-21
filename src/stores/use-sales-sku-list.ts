@@ -4,23 +4,23 @@ import type {
   BaseResDtoWithAxios,
   DailySalesSkuListReqDto,
   DailySalesSkuListResDto,
-  SkuList,
   SkuRefundRateReqDto,
   SkuRefundRateResDto
 } from '@/core/dtos'
 
 export const useSalesSkuListStore = defineStore('useSalesSkuList', {
   state: () => ({
-    dailySalesSkuListData: {} as DailySalesSkuListResDto | {},
+    dailySalesSkuListData: {} as DailySalesSkuListResDto | any,
     tableCurrency: '' as string,
-    skuRefundRate: [] as SkuRefundRateResDto[]
+    skuRefundRate: [] as SkuRefundRateResDto[],
+    pagination: {
+      pageSize: 30,
+      pageNumber: 1,
+      pageRequestNumber: 1
+    }
   }),
 
-  getters: {
-    getSkuList: (state: any): SkuList[] => {
-      return state.dailySalesSkuListData?.item?.skuList || []
-    }
-  },
+  getters: {},
 
   actions: {
     async fetchDailySalesSkuList(body: DailySalesSkuListReqDto) {
@@ -41,10 +41,7 @@ export const useSalesSkuListStore = defineStore('useSalesSkuList', {
 
     async fetchSkuRefundRate(body: SkuRefundRateReqDto) {
       try {
-        const { data }: BaseResDtoWithAxios<SkuRefundRateResDto[]> = await http.post(
-          'data/get-sku-refund-rate',
-          body
-        )
+        const { data }: BaseResDtoWithAxios<SkuRefundRateResDto[]> = await http.post('data/get-sku-refund-rate', body)
         this.skuRefundRate = data.Data
         return data
       } catch (err: any) {
@@ -56,6 +53,15 @@ export const useSalesSkuListStore = defineStore('useSalesSkuList', {
       this.dailySalesSkuListData = {}
       this.tableCurrency = ''
       this.skuRefundRate = []
+      this.resetPagination()
+    },
+
+    resetPagination() {
+      this.pagination = {
+        pageSize: 30,
+        pageNumber: 1,
+        pageRequestNumber: 1
+      }
     }
   }
 })

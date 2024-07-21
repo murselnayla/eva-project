@@ -1,19 +1,14 @@
-<style scoped></style>
-
 <script setup lang="ts">
-import { ref, computed, onMounted, reactive } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useAuthStore, useSalesAnalyticStore, useSalesSkuListStore } from '@/stores'
-import type {
-  DailySalesOverviewDay,
-  DailySalesOverviewReqDto,
-  DailySalesSkuListReqDto,
-  SkuRefundRateReqDto
-} from '@/core/dtos'
+import type { DailySalesOverviewDay, DailySalesOverviewReqDto } from '@/core/dtos'
 import { useToast } from 'vue-toastification'
+import { useSkuTable } from '@/composables'
 
 const authStore = useAuthStore()
 const salesAnalyticStore = useSalesAnalyticStore()
 const salesSkuListStore = useSalesSkuListStore()
+const skuPagination = useSkuTable()
 const toast = useToast()
 const isLoading = ref(false)
 
@@ -46,43 +41,8 @@ const onChangeChartSelect = async (selectedPoints: any[]) => {
     salesSkuListStore.resetState()
     return
   }
-  // isLoading.value = true
-  const body: DailySalesSkuListReqDto = {
-    marketplace: authStore.getMarketplace,
-    sellerId: authStore.getSellerId,
-    salesDate: selectedPoints[0].salesDate,
-    ...(selectedPoints.length === 2 && { salesDate2: selectedPoints[1].salesDate }),
-    pageSize: 10,
-    pageNumber: 1,
-    isDaysCompare: selectedPoints.length - 1
-  }
-
-  try {
-    await salesSkuListStore.fetchDailySalesSkuList(body)
-    await fetchSkuRefundRate()
-  } catch (err: any) {
-    toast.error(err.message)
-  } finally {
-    isLoading.value = false
-  }
-}
-
-const fetchSkuRefundRate = async () => {
-  // isLoading.value = true
-  const body: SkuRefundRateReqDto = {
-    marketplace: authStore.getMarketplace,
-    sellerId: authStore.getSellerId,
-    requestedDay: salesAnalyticStore.selectedLastDay,
-    skuList: salesSkuListStore.getSkuList.map((item) => item.sku)
-  }
-
-  try {
-    await salesSkuListStore.fetchSkuRefundRate(body)
-  } catch (err: any) {
-    toast.error(err.message)
-  } finally {
-    isLoading.value = false
-  }
+  salesSkuListStore.resetPagination()
+  await skuPagination.fetchSalesSkuList()
 }
 
 const chartOptions = computed(() => ({
@@ -102,7 +62,6 @@ const chartOptions = computed(() => ({
   },
   yAxis: {
     allowDecimals: true,
-    lineColor: 'black',
     min: 0,
     title: {
       text: `Amount (${salesAnalyticStore.chartCurrency})`

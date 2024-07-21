@@ -8,13 +8,14 @@ import type {
   SkuRefundRateResDto
 } from '@/core/dtos'
 
+const PAGE_SIZE = 30
 export const useSalesSkuListStore = defineStore('useSalesSkuList', {
   state: () => ({
     dailySalesSkuListData: {} as DailySalesSkuListResDto | any,
     tableCurrency: '' as string,
     skuRefundRate: [] as SkuRefundRateResDto[],
     pagination: {
-      pageSize: 30,
+      pageSize: PAGE_SIZE,
       pageNumber: 1,
       pageRequestNumber: 1
     }
@@ -58,7 +59,7 @@ export const useSalesSkuListStore = defineStore('useSalesSkuList', {
 
     resetPagination() {
       this.pagination = {
-        pageSize: 30,
+        pageSize: PAGE_SIZE,
         pageNumber: 1,
         pageRequestNumber: 1
       }

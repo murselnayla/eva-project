@@ -89,6 +89,7 @@ export function useSkuTable() {
     pageNumber,
     currentPageItems,
     tableCurrency,
+    selectedLastDay: salesAnalyticStore.selectedLastDay,
     totalPages,
     disabledPrevBtn,
     disabledNextBtn,

@@ -7,7 +7,7 @@ const salesSkuListStore = useSalesSkuListStore()
 </script>
 
 <template>
-  <div class="px-10 pb-[200px]">
+  <div class="px-10 pb-16">
     <DailySalesChart />
     <template v-if="salesSkuListStore?.dailySalesSkuListData.item?.skuList">
       <div class="mt-28">

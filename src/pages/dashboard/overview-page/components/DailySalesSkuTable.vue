@@ -7,7 +7,7 @@ import DailySalesSkuTablePagination from '@/pages/dashboard/overview-page/compon
 
 const salesSkuListStore = useSalesSkuListStore()
 const getDailySalesItem = computed(() => salesSkuListStore.dailySalesSkuListData?.item)
-const { currentPageItems, tableCurrency } = useSkuTable()
+const { currentPageItems, tableCurrency, selectedLastDay } = useSkuTable()
 </script>
 
 <template>
@@ -32,7 +32,7 @@ const { currentPageItems, tableCurrency } = useSkuTable()
             </th>
             <th class="min-w-[160px] text-right">
               <span>Sku Refund Rate</span><br />
-              <small>(Last 60 days)</small>
+              <small>(Last {{ selectedLastDay }} days)</small>
             </th>
           </tr>
         </thead>
@@ -54,8 +54,11 @@ const { currentPageItems, tableCurrency } = useSkuTable()
           </template>
         </tbody>
       </table>
+      <div v-if="!currentPageItems.length">
+        <div class="flex justify-center items-center py-4 text-gray-500 h-[150px]">No items available in table</div>
+      </div>
     </div>
-    <div class="flex items-center justify-end gap-2 mt-8">
+    <div v-if="currentPageItems.length > 0" class="flex items-center justify-end gap-2 mt-8">
       <DailySalesSkuTablePagination />
     </div>
   </div>

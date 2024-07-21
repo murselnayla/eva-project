@@ -54,15 +54,15 @@ export function useSkuTable() {
 
   const fetchSalesSkuList = async (pageNum: number = pageRequestNumber.value) => {
     pageLoadingStore.showLoading()
-    const { chartsSelectedPoints } = salesAnalyticStore
+    const { chartSelectedPoints } = salesAnalyticStore
     const body: DailySalesSkuListReqDto = {
       marketplace: authStore.getMarketplace,
       sellerId: authStore.getSellerId,
-      salesDate: chartsSelectedPoints[0].salesDate,
-      ...(chartsSelectedPoints.length === 2 && { salesDate2: chartsSelectedPoints[1].salesDate }),
+      salesDate: chartSelectedPoints[0].salesDate,
+      ...(chartSelectedPoints.length === 2 && { salesDate2: chartSelectedPoints[1].salesDate }),
       pageSize: pageSize.value,
       pageNumber: pageNum,
-      isDaysCompare: chartsSelectedPoints.length - 1
+      isDaysCompare: chartSelectedPoints.length - 1
     }
 
     try {

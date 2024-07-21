@@ -19,7 +19,7 @@ export const useSalesAnalyticStore = defineStore('useSalesAnalytic', {
     chartFbmAmountSeries: [] as any[],
     chartCategoryDates: [] as any[],
     chartSeriesData: [] as any[],
-    chartsSelectedPoints: [] as IChartSelectedPoint[],
+    chartSelectedPoints: [] as IChartSelectedPoint[],
     selectedLastDay: 14 as DailySalesOverviewDay,
     selectedDateColors: ['#28ab2c', '#449a9a'] as string[]
   }),

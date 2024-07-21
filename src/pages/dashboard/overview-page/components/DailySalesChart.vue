@@ -46,23 +46,23 @@ const onChangeChartSelect = async (selectedPoints: any[]) => {
 }
 
 const toggleChartPoint = (index: number, salesDate: string) => {
-  const pointIndex = salesAnalyticStore.chartsSelectedPoints.findIndex((point) => point.salesDate === salesDate)
+  const pointIndex = salesAnalyticStore.chartSelectedPoints.findIndex((point) => point.salesDate === salesDate)
 
   if (pointIndex !== -1) {
-    salesAnalyticStore.chartsSelectedPoints.splice(pointIndex, 1)
+    salesAnalyticStore.chartSelectedPoints.splice(pointIndex, 1)
   } else {
-    if (salesAnalyticStore.chartsSelectedPoints.length >= 2) {
-      salesAnalyticStore.chartsSelectedPoints.shift()
+    if (salesAnalyticStore.chartSelectedPoints.length >= 2) {
+      salesAnalyticStore.chartSelectedPoints.shift()
     }
-    salesAnalyticStore.chartsSelectedPoints.push({ salesDate, index })
+    salesAnalyticStore.chartSelectedPoints.push({ salesDate, index })
   }
 
-  onChangeChartSelect(salesAnalyticStore.chartsSelectedPoints)
+  onChangeChartSelect(salesAnalyticStore.chartSelectedPoints)
 }
 
 const drawPlotBand = (xAxis: any) => {
   xAxis.removePlotBand('selected')
-  salesAnalyticStore.chartsSelectedPoints.forEach((point: any, index: number) => {
+  salesAnalyticStore.chartSelectedPoints.forEach((point: any, index: number) => {
     xAxis.addPlotBand({
       from: point.index - 0.5,
       to: point.index + 0.5,

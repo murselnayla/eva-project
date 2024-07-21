@@ -114,6 +114,7 @@ const chartOptions = computed(() => ({
   series: [
     {
       name: 'Profit',
+      color: '#58F1C7',
       data: salesAnalyticStore.chartProfitSeries.map((value, index) => ({
         y: value,
         salesDate: salesAnalyticStore.chartCategoryDates[index]
@@ -121,14 +122,16 @@ const chartOptions = computed(() => ({
     },
     {
       name: 'FBA Sales',
-      data: salesAnalyticStore.chartFbmAmountSeries.map((value, index) => ({
+      color: '#8287E2',
+      data: salesAnalyticStore.chartFbaAmountSeries.map((value, index) => ({
         y: value,
         salesDate: salesAnalyticStore.chartCategoryDates[index]
       }))
     },
     {
       name: 'FBM Sales',
-      data: salesAnalyticStore.chartFbaAmountSeries.map((value, index) => ({
+      color: '#503FF0',
+      data: salesAnalyticStore.chartFbmAmountSeries.map((value, index) => ({
         y: value,
         salesDate: salesAnalyticStore.chartCategoryDates[index]
       }))

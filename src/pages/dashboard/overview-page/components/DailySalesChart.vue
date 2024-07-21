@@ -47,15 +47,11 @@ const onChangeChartSelect = async (selectedPoints: any[]) => {
 
 const chartOptions = computed(() => ({
   chart: {
-    type: 'column'
+    type: 'column',
+    backgroundColor: null
   },
-  credits: {
-    enabled: false
-  },
-  title: {
-    text: 'Daily Sales',
-    align: 'center'
-  },
+  credits: { enabled: false },
+  title: { text: null },
   xAxis: {
     categories: salesAnalyticStore.getChartCategories,
     labels: {
@@ -143,18 +139,22 @@ const chartOptions = computed(() => ({
 
 <template>
   <div>
-    <select
-      v-model="salesAnalyticStore.selectedLastDay"
-      @change="fetchDailySalesOverview(salesAnalyticStore.selectedLastDay)"
-      class="block ml-auto text-sm bg-gray-200 rounded-lg p-2.5 mb-3"
-    >
-      <template v-for="(day, index) in [7, 14, 30, 60]" :key="index">
-        <option :value="day">Last {{ day }} Days</option>
-      </template>
-    </select>
-
     <template v-if="salesAnalyticStore.dailySalesOverviewData">
-      <highcharts :options="chartOptions" style="width: 100%" />
+      <div class="pt-2 bg-white rounded-md">
+        <div class="flex justify-between items-center px-3 mb-5 font-medium text-base">
+          <span>Daily Sales</span>
+          <select
+            v-model="salesAnalyticStore.selectedLastDay"
+            @change="fetchDailySalesOverview(salesAnalyticStore.selectedLastDay)"
+            class="p-2 bg-transparent outline-0 text-right"
+          >
+            <template v-for="(day, index) in [7, 14, 30, 60]" :key="index">
+              <option :value="day">Last {{ day }} Days</option>
+            </template>
+          </select>
+        </div>
+        <highcharts :options="chartOptions" style="width: 100%" />
+      </div>
     </template>
   </div>
 </template>

@@ -52,9 +52,13 @@ const toggleChartPoint = (index: number, salesDate: string) => {
     salesAnalyticStore.chartSelectedPoints.splice(pointIndex, 1)
   } else {
     if (salesAnalyticStore.chartSelectedPoints.length >= 2) {
-      salesAnalyticStore.chartSelectedPoints.shift()
+      const sortedPoints = [...salesAnalyticStore.chartSelectedPoints].sort((a, b) => a.addedDate - b.addedDate)
+      const minDateItemIndex = salesAnalyticStore.chartSelectedPoints.indexOf(sortedPoints[0])
+      salesAnalyticStore.chartSelectedPoints.splice(minDateItemIndex, 1)
     }
-    salesAnalyticStore.chartSelectedPoints.push({ salesDate, index })
+
+    salesAnalyticStore.chartSelectedPoints.push({ salesDate, index, addedDate: Date.now() })
+    salesAnalyticStore.chartSelectedPoints.sort((a, b) => a.index - b.index)
   }
 
   onChangeChartSelect(salesAnalyticStore.chartSelectedPoints)
